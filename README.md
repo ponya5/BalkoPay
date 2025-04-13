@@ -68,4 +68,4 @@ To deploy to Firebase:
 - Python 3.7+
 - Flask
 - Firebase Admin SDK
-- python-dotenv 
+- python-dotenv
