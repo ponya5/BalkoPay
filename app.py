@@ -14,11 +14,9 @@ USERS = [
     {"id": "1", "name": "דניאל", "avatar": "דניאל.png"},
     {"id": "2", "name": "אלעד", "avatar": "אלעד.png"},
     {"id": "3", "name": "אהוד", "avatar": "אהוד.png"},
-    {"id": "4", "name": "דובי", "avatar": "דובי.png"},
     {"id": "5", "name": "שוצי", "avatar": "שוצי.png"},
     {"id": "6", "name": "כפיר", "avatar": "כפיר.png"},
-    {"id": "7", "name": "טראו", "avatar": "טראו.png"},
-    {"id": "8", "name": "כהן", "avatar": "כהן.png"}
+    {"id": "7", "name": "טראו", "avatar": "טראו.png"}
 ]
 
 # Read Simon lines from file
