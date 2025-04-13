@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>באלקוPAY</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="header-container">
+            <div class="header-content">
+                <h1>באלקוPAY</h1>
+                <div class="avatar-dropdown">
+                    <div class="avatar-icon" id="avatarDropdown">
+                        <img src="{{ url_for('static', filename='images/דניאל.png') }}" alt="Avatar" id="mainAvatar">
+                    </div>
+                    <div class="avatar-dropdown-content" id="avatarDropdownContent">
+                        {% for user in users %}
+                        <div class="user-option" data-user-id="{{ user.id }}" data-avatar="{{ user.avatar }}" data-avatar-src="{{ url_for('static', filename='images/' + user.avatar) }}">
+                            <img src="{{ url_for('static', filename='images/' + user.avatar) }}" alt="{{ user.name }}">
+                            <span>{{ user.name }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bill-container">
+            <div id="defaultUI" class="default-ui">
+                <h2>ברוכים הבאים ל-באלקוPAY</h2>
+                <p>לחץ על כפתור "ערוך חשבון" כדי להתחיל לחלק את החשבון</p>
+                <button class="btn btn-primary" id="editBillBtn">
+                    <i class="bi bi-pencil-square"></i>
+                    ערוך חשבון
+                </button>
+            </div>
+
+            <div id="itemsList" style="display: none;">
+                <div class="event-details mb-4">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="eventPlace" placeholder="מקום האירוע">
+                    </div>
+                    <div class="datetime-display">
+                        <span id="currentDateTime"></span>
+                    </div>
+                </div>
+                <!-- Items will be added here dynamically -->
+            </div>
+
+            <div class="mt-4" id="calculateSection" style="display: none;">
+                <div class="tip-input mb-3">
+                    <label for="tipPercentage" class="form-label">אחוז טיפ:</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="tipPercentage" value="0" min="0" max="100" step="0.1">
+                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="calculateBtn">
+                    <i class="bi bi-calculator"></i>
+                    חשב חשבון
+                </button>
+            </div>
+
+            <div id="results" class="mt-4" style="display: none;">
+                <div class="result-summary">
+                    <div class="total">סך הכל: <span id="totalAmount">0.00</span> ₪</div>
+                    <div class="tip">טיפ: <span id="tipAmount">0.00</span> ₪</div>
+                    <div class="final-total">סה"כ לתשלום: <span id="finalTotal">0.00</span> ₪</div>
+                </div>
+                <h3 class="mt-4">חלוקה לפי משתמשים:</h3>
+                <div id="userResults"></div>
+                <button class="btn btn-primary mt-4" id="saveEventBtn">
+                    <i class="bi bi-save"></i>
+                    שמור
+                </button>
+            </div>
+        </div>
+
+        <div class="saved-events mt-4">
+            <h3>אירועים שמורים</h3>
+            <div id="savedEventsList"></div>
+        </div>
+    </div>
+
+    <!-- Event Summary Modal -->
+    <div class="modal fade" id="eventSummaryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">סיכום אירוע</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="eventSummaryContent">
+                    <!-- Event summary content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">מחיקת אירוע</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    האם אתה בטוח שברצונך למחוק אירוע זה?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">מחק</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Template (hidden) -->
+    <template id="itemTemplate">
+        <div class="item-row">
+            <div class="item-group">
+                <div class="item-name-container">
+                    <button class="btn add-item-btn" type="button">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                    <input type="text" class="form-control item-name" placeholder="שם הפריט">
+                </div>
+                <div class="item-price-container">
+                    <input type="number" class="form-control item-price" placeholder="מחיר" step="0.01">
+                    <span class="input-group-text">₪</span>
+                </div>
+            </div>
+            <button class="btn select-users-btn" type="button">
+                <i class="bi bi-people"></i>
+            </button>
+            <div class="selected-users"></div>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 
