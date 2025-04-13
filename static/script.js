@@ -13,6 +13,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveAvatarBtn = document.getElementById('saveAvatarBtn');
     let selectedAvatar = null;
 
+    // Ensure all required elements exist
+    if (!avatarDropdown || !avatarDropdownContent || !editBillBtn || !itemsList || 
+        !calculateBtn || !results || !defaultUI || !calculateSection || !itemTemplate) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    // Initialize simonLines if not already defined
+    if (typeof window.simonLines === 'undefined') {
+        window.simonLines = [
+            "Why are you gay?",
+            "You are gay.",
+            "Who says I'm gay?",
+            "You are a transgender.",
+            "You are a man and you are gay."
+        ];
+    }
+
     // Add new item functionality
     function addNewItem() {
         const newItem = itemTemplate.content.cloneNode(true);
@@ -157,61 +175,74 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Calculate bill
+    // Calculate button click handler
     calculateBtn.addEventListener('click', function() {
-        const items = Array.from(itemsList.querySelectorAll('.item-row')).map(row => {
-            const name = row.querySelector('.item-name').value;
-            const price = parseFloat(row.querySelector('.item-price').value) || 0;
-            const selectedUsers = Array.from(row.querySelectorAll('.selected-user'))
-                .map(user => user.dataset.userId);
-            
-            return { name, price, selectedUsers };
-        });
+        const calculationContainer = document.getElementById('calculationContainer');
+        const simonImage = document.getElementById('simonImage');
+        const speechBubble = document.getElementById('speechBubble');
 
-        // Calculate total per person
-        const personTotals = {};
-        let totalBill = 0;
+        if (!calculationContainer || !simonImage || !speechBubble) {
+            console.error('Required elements for calculation not found');
+            return;
+        }
+
+        // Show calculation container
+        calculationContainer.style.display = 'block';
         
-        items.forEach(item => {
-            totalBill += item.price;
-            const splitAmount = item.price / item.selectedUsers.length;
-            item.selectedUsers.forEach(userId => {
-                if (!personTotals[userId]) {
-                    personTotals[userId] = 0;
+        // Calculate and display results
+        calculateAndDisplayResults();
+        
+        // Reset Simon and speech bubble
+        simonImage.style.opacity = '0';
+        speechBubble.style.opacity = '0';
+        speechBubble.innerHTML = '';
+        
+        // Force a reflow to ensure transitions work
+        void simonImage.offsetWidth;
+        void speechBubble.offsetWidth;
+        
+        // Show Simon after 5 seconds
+        setTimeout(() => {
+            console.log('Showing Simon...');
+            simonImage.style.opacity = '1';
+            
+            // Show speech bubble with random text after 3 more seconds
+            setTimeout(() => {
+                console.log('Showing speech bubble...');
+                if (window.simonLines && window.simonLines.length > 0) {
+                    const randomLine = window.simonLines[Math.floor(Math.random() * window.simonLines.length)];
+                    console.log('Random line:', randomLine);
+                    
+                    // Create new element for typing animation
+                    const textElement = document.createElement('div');
+                    textElement.className = 'typing-animation';
+                    
+                    // Create text node to ensure proper text handling
+                    const textNode = document.createTextNode(randomLine);
+                    textElement.appendChild(textNode);
+                    
+                    // Force LTR and left alignment
+                    textElement.style.direction = 'ltr';
+                    textElement.style.textAlign = 'left';
+                    
+                    // Add to speech bubble and show
+                    speechBubble.innerHTML = '';
+                    speechBubble.appendChild(textElement);
+                    
+                    // Force a reflow before showing
+                    void speechBubble.offsetWidth;
+                    speechBubble.style.opacity = '1';
+                    
+                    // After typing animation completes
+                    setTimeout(() => {
+                        console.log('Animation complete, setting final styles...');
+                        // Keep only the blinking cursor animation
+                        textElement.style.animation = 'blink-caret .75s step-end infinite';
+                        textElement.style.width = '100%';
+                    }, 3000);
                 }
-                personTotals[userId] += splitAmount;
-            });
-        });
-
-        // Calculate tip
-        const tipPercent = parseFloat(tipPercentage.value) || 0;
-        const tipAmount = totalBill * (tipPercent / 100);
-        const totalWithTip = totalBill + tipAmount;
-
-        // Display results
-        results.style.display = 'block';
-        document.getElementById('totalAmount').textContent = totalBill.toFixed(2);
-        document.getElementById('tipAmount').textContent = tipAmount.toFixed(2);
-        document.getElementById('finalTotal').textContent = totalWithTip.toFixed(2);
-
-        // Display per-person results
-        const userResults = document.getElementById('userResults');
-        userResults.innerHTML = '';
-        
-        Object.entries(personTotals).forEach(([userId, amount]) => {
-            const userOption = avatarDropdownContent.querySelector(`[data-user-id="${userId}"]`);
-            const userAmount = amount + (amount / totalBill * tipAmount);
-            
-            const resultItem = document.createElement('div');
-            resultItem.className = 'result-item';
-            resultItem.innerHTML = `
-                <div class="d-flex align-items-center">
-                    ${userOption.innerHTML}
-                    <span class="amount">${userAmount.toFixed(2)} ₪</span>
-                </div>
-            `;
-            userResults.appendChild(resultItem);
-        });
+            }, 3000);
+        }, 5000);
     });
 
     // Update date and time display
@@ -426,5 +457,68 @@ document.addEventListener('DOMContentLoaded', function() {
             mainAvatar.src = savedOption.dataset.avatarSrc;
             savedOption.classList.add('selected');
         }
+    }
+
+    function calculateAndDisplayResults() {
+        const totalAmountElement = document.getElementById('totalAmount');
+        const tipAmountElement = document.getElementById('tipAmount');
+        const finalTotalElement = document.getElementById('finalTotal');
+        const userResultsElement = document.getElementById('userResults');
+
+        if (!totalAmountElement || !tipAmountElement || !finalTotalElement || !userResultsElement) {
+            console.error('Required result elements not found');
+            return;
+        }
+
+        const items = Array.from(itemsList.querySelectorAll('.item-row')).map(row => {
+            const name = row.querySelector('.item-name')?.value || '';
+            const price = parseFloat(row.querySelector('.item-price')?.value) || 0;
+            const selectedUsers = Array.from(row.querySelectorAll('.selected-user'))
+                .map(user => user.dataset.userId)
+                .filter(id => id); // Filter out undefined/null values
+            
+            return { name, price, selectedUsers };
+        });
+
+        // Calculate totals
+        let totalBill = 0;
+        const personTotals = {};
+
+        items.forEach(item => {
+            if (item.selectedUsers.length > 0) {
+                totalBill += item.price;
+                const splitAmount = item.price / item.selectedUsers.length;
+                item.selectedUsers.forEach(userId => {
+                    personTotals[userId] = (personTotals[userId] || 0) + splitAmount;
+                });
+            }
+        });
+
+        const tipPercent = parseFloat(tipPercentage.value) || 0;
+        const tipAmount = totalBill * (tipPercent / 100);
+        const totalWithTip = totalBill + tipAmount;
+
+        // Update display
+        totalAmountElement.textContent = totalBill.toFixed(2);
+        tipAmountElement.textContent = tipAmount.toFixed(2);
+        finalTotalElement.textContent = totalWithTip.toFixed(2);
+
+        // Update per-person results
+        userResultsElement.innerHTML = '';
+        Object.entries(personTotals).forEach(([userId, amount]) => {
+            const userOption = avatarDropdownContent.querySelector(`[data-user-id="${userId}"]`);
+            if (userOption) {
+                const userAmount = amount + (amount / totalBill * tipAmount);
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        ${userOption.innerHTML}
+                        <span class="amount">${userAmount.toFixed(2)} ₪</span>
+                    </div>
+                `;
+                userResultsElement.appendChild(resultItem);
+            }
+        });
     }
 }); 
