@@ -162,7 +162,7 @@ body {
 .item-group {
     display: flex;
     flex-direction: row-reverse;
-    align-items: center;
+    align-items: stretch;
     gap: 0.5rem;
     flex: 2;
 }
@@ -170,7 +170,7 @@ body {
 .item-name-container, .item-price-container {
     display: flex;
     flex-direction: row-reverse;
-    align-items: center;
+    align-items: stretch;
     gap: 0.5rem;
     flex: 1;
 }
@@ -184,6 +184,8 @@ body {
     transition: border 0.2s, box-shadow 0.2s;
     text-align: right;
     direction: rtl;
+    height: 44px;
+    box-sizing: border-box;
 }
 
 .item-name:focus, .item-price:focus {
