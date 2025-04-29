@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Ensure all required elements exist
     if (!avatarDropdown || !avatarDropdownContent || !editBillBtn || !itemsList || 
-        !calculateBtn || !resetBtn || !results || !defaultUI || !calculateSection || !itemTemplate) {
+        !calculateBtn || !results || !defaultUI || !calculateSection || !itemTemplate) {
         console.error('Required elements not found');
         return;
     }
@@ -524,7 +524,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Reset button functionality
-    resetBtn.addEventListener('click', function() {
-        window.location.reload();
-    });
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            window.location.reload();
+        });
+    }
 }); 
