@@ -733,4 +733,108 @@ input[type="number"] {
 .form-control:focus {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
     border-color: #007bff;
+}
+
+/* --- Responsive Design for Mobile Devices --- */
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+  .container {
+    padding: 0.5rem !important;
+  }
+  .header-container {
+    padding: 1.5rem 0.5rem;
+    height: 120px;
+    border-radius: 10px;
+  }
+  .header-content h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .avatar-icon {
+    width: 48px;
+    height: 48px;
+  }
+  .avatar-dropdown-content {
+    min-width: 120px;
+    top: 120px;
+    padding: 8px;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .user-option img {
+    width: 40px;
+    height: 40px;
+  }
+  .bill-container {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+  .item-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  .item-group {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .event-details {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+  .saved-events {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+  .modal-content {
+    max-width: 98vw;
+    padding: 10px;
+  }
+  .calculation-container {
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+  .simon-image {
+    width: 60px;
+    height: 60px;
+    left: 5px;
+  }
+  .speech-bubble {
+    left: 70px;
+    top: 10px;
+    width: 140px;
+    padding: 8px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  .summary-header h4 {
+    font-size: 1.1rem;
+  }
+  .form-control {
+    padding: 0.4rem 0.7rem;
+    font-size: 1rem;
+  }
+  .btn {
+    padding: 0.4rem 0.7rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content h1 {
+    font-size: 1.2rem;
+  }
+  .avatar-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .speech-bubble {
+    left: 50px;
+    top: 5px;
+    width: 90px;
+    font-size: 11px;
+    padding: 5px;
+  }
 } 
