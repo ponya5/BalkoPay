@@ -241,6 +241,28 @@ body {
     margin: 0;
 }
 
+/* Button group styling */
+#calculateSection {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+#calculateBtn, #resetBtn {
+    min-width: 120px;
+}
+
+#resetBtn {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+#resetBtn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
 /* Modal Styles */
 .modal-header {
     border-bottom: 1px solid #dee2e6;

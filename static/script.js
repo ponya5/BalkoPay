@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const editBillBtn = document.getElementById('editBillBtn');
     const itemsList = document.getElementById('itemsList');
     const calculateBtn = document.getElementById('calculateBtn');
+    const resetBtn = document.getElementById('resetBtn');
     const results = document.getElementById('results');
     const defaultUI = document.getElementById('defaultUI');
     const calculateSection = document.getElementById('calculateSection');
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Ensure all required elements exist
     if (!avatarDropdown || !avatarDropdownContent || !editBillBtn || !itemsList || 
-        !calculateBtn || !results || !defaultUI || !calculateSection || !itemTemplate) {
+        !calculateBtn || !resetBtn || !results || !defaultUI || !calculateSection || !itemTemplate) {
         console.error('Required elements not found');
         return;
     }
@@ -521,4 +522,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Reset button functionality
+    resetBtn.addEventListener('click', function() {
+        window.location.reload();
+    });
 }); 
